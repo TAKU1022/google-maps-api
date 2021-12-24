@@ -6,6 +6,6 @@ function initMap() {
 
   var marker = new google.maps.Marker({
     position: { lat: 35.665498, lng: 139.75964 },
-    map: map,
+    map,
   });
 }
