@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/TAKU1022/google-maps-api#readme",
   "dependencies": {
+    "axios": "^0.24.0",
     "express": "^4.17.2"
   },
   "devDependencies": {
