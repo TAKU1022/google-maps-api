@@ -1,5 +1,6 @@
 let map = null;
 let markerList = [];
+let infoWindowList = [];
 let geocoder = null;
 
 function initMap() {
@@ -7,7 +8,6 @@ function initMap() {
     zoom: 6,
     center: { lat: 36.0047, lng: 137.5936 },
   });
-
   geocoder = new google.maps.Geocoder();
 }
 
@@ -16,10 +16,18 @@ const addMaker = (i, place) => {
     position: place,
     map,
   });
+};
 
+const addInfoWindow = (i, shopName) => {
+  infoWindowList[i] = new google.maps.InfoWindow({ content: shopName });
+};
+
+const onClickMarker = (i) => {
   markerList[i].addListener('click', () => {
     map.panTo(markerList[i].getPosition());
     map.setZoom(16);
+
+    infoWindowList[i].open(map, markerList[i]);
   });
 };
 
@@ -64,27 +72,27 @@ document.getElementById('form').addEventListener('submit', async (e) => {
     return;
   }
 
-  results.shop
-    .map((shop) => shop.address)
-    .forEach((address, i) => {
-      geocoder.geocode({ address }, (results, status) => {
-        if (status == google.maps.GeocoderStatus.OK) {
-          const bounds = new google.maps.LatLngBounds();
+  results.shop.forEach((shop, i) => {
+    geocoder.geocode({ address: shop.address }, (results, status) => {
+      if (status == google.maps.GeocoderStatus.OK) {
+        const bounds = new google.maps.LatLngBounds();
 
-          if (results[0].geometry) {
-            let latlng = results[0].geometry.location;
+        if (results[0].geometry) {
+          let latlng = results[0].geometry.location;
 
-            bounds.extend(latlng);
-            addMaker(i, latlng);
-          }
-        } else if (status == google.maps.GeocoderStatus.ZERO_RESULTS) {
-          alert('見つかりません');
-        } else {
-          console.log(status);
-          alert('文字を入力してください');
+          bounds.extend(latlng);
+          addMaker(i, latlng);
+          addInfoWindow(i, shop.name);
+          onClickMarker(i);
         }
-      });
+      } else if (status == google.maps.GeocoderStatus.ZERO_RESULTS) {
+        alert('見つかりません');
+      } else {
+        console.log(status);
+        alert('文字を入力してください');
+      }
     });
+  });
 
   changeMap();
   deleteMakers();
