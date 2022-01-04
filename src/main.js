@@ -1,6 +1,6 @@
-let map;
-let marker;
-let geocoder;
+let map = null;
+let markerList = [];
+let geocoder = null;
 
 function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
@@ -11,18 +11,24 @@ function initMap() {
   geocoder = new google.maps.Geocoder();
 }
 
-const addMaker = (place) => {
-  marker = new google.maps.Marker({
+const addMaker = (i, place) => {
+  markerList[i] = new google.maps.Marker({
     position: place,
     map,
+  });
+
+  markerList[i].addListener('click', () => {
+    map.panTo(markerList[i].getPosition());
+    map.setZoom(16);
   });
 };
 
 const deleteMakers = () => {
-  if (marker != null) {
-    marker.setMap(null);
-  }
-  marker = null;
+  markerList.forEach((marker) => {
+    if (marker != null) {
+      marker.setMap(null);
+    }
+  });
 };
 
 const changeMap = () => {
@@ -54,7 +60,7 @@ document.getElementById('form').addEventListener('submit', async (e) => {
 
   results.shop
     .map((shop) => shop.address)
-    .forEach((address) => {
+    .forEach((address, i) => {
       geocoder.geocode({ address }, (results, status) => {
         if (status == google.maps.GeocoderStatus.OK) {
           const bounds = new google.maps.LatLngBounds();
@@ -63,7 +69,7 @@ document.getElementById('form').addEventListener('submit', async (e) => {
             let latlng = results[0].geometry.location;
 
             bounds.extend(latlng);
-            addMaker(latlng);
+            addMaker(i, latlng);
           }
         } else if (status == google.maps.GeocoderStatus.ZERO_RESULTS) {
           alert('見つかりません');
@@ -75,4 +81,5 @@ document.getElementById('form').addEventListener('submit', async (e) => {
     });
 
   changeMap();
+  deleteMakers();
 });
