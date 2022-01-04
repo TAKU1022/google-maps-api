@@ -47,6 +47,13 @@ document.getElementById('form').addEventListener('submit', async (e) => {
     )}`
   );
   const results = api.data.results;
+  const hitNumber = document.getElementById('hit-number');
+  if (hitNumber.firstChild) {
+    hitNumber.removeChild(hitNumber.firstChild);
+  }
+  hitNumber.appendChild(
+    document.createTextNode(`${results.results_available}件ヒットしました`)
+  );
 
   if (!results.shop) {
     alert('条件を絞り込んでください。');
@@ -54,7 +61,6 @@ document.getElementById('form').addEventListener('submit', async (e) => {
   }
 
   if (results.results_available === 0) {
-    alert('ヒットした件数は0件です。');
     return;
   }
 
