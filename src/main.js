@@ -64,6 +64,7 @@ document.getElementById('form').addEventListener('submit', async (e) => {
   );
 
   if (!results.shop) {
+    hitNumber.removeChild(hitNumber.firstChild);
     alert('条件を絞り込んでください。');
     return;
   }
