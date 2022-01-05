@@ -73,8 +73,8 @@ document.getElementById('form').addEventListener('submit', async (e) => {
     return;
   }
 
-  results.shop.forEach((shop, i) => {
-    geocoder.geocode({ address: shop.address }, (results, status) => {
+  results.shop.forEach((shopData, i) => {
+    geocoder.geocode({ address: shopData.address }, (results, status) => {
       if (status == google.maps.GeocoderStatus.OK) {
         const bounds = new google.maps.LatLngBounds();
 
@@ -83,7 +83,7 @@ document.getElementById('form').addEventListener('submit', async (e) => {
 
           bounds.extend(latlng);
           addMaker(i, latlng);
-          addInfoWindow(i, shop.name);
+          addInfoWindow(i, shopData.name);
           onClickMarker(i);
         }
       } else if (status == google.maps.GeocoderStatus.ZERO_RESULTS) {
